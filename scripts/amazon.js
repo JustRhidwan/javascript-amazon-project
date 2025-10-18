@@ -1,6 +1,9 @@
 
 let productsHTML = ''
 
+windows.onload = (event) => {
+ event.preventDefault();
+}
 products.forEach((product) => {
     productsHTML += `
      <div class="product-container">
