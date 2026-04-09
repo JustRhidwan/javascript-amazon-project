@@ -16,6 +16,7 @@ cart.forEach((cartItem)=>{
             matchingProduct= product;
         }
     })
+
     const deliveryOptionId = cartItem.deliveryOptionId;
 
     let deliveryOption;
@@ -25,11 +26,14 @@ cart.forEach((cartItem)=>{
         }
       });
 
-       const today = dayjs();
-  const deliveryDate = today.add(deliveryOption.deliveryDays, 'days');
-  const dateString = deliveryDate.format('dddd, MMMM D');
+      const today = dayjs();
+      const deliveryDate = today.add(
+        deliveryOption.deliveryDays,
+         'days'
+        );
+      const dateString = deliveryDate.format('dddd, MMMM D');
 
-  const priceString = deliveryOption.priceCents === 0 ? 'FREE' : `$${(formatMoney(deliveryOption.priceCents))} -`;
+ // const priceString = deliveryOption.priceCents === 0 ? 'FREE' : `$${(formatMoney(deliveryOption.priceCents))} -`;
 
   
 
@@ -41,7 +45,7 @@ cart.forEach((cartItem)=>{
      cartSummaryHTML += `
      <div class="cart-item-container item-container-${matchingProduct.id}">
         <div class="delivery-date">
-          Delivery date: ${dateString}
+         Delivery Date : ${dateString}
         </div>
 
         <div class="cart-item-details-grid">
@@ -91,7 +95,10 @@ deliveryOptions.forEach((deliveryOption) => {
   const deliveryDate = today.add(deliveryOption.deliveryDays, 'days');
   const dateString = deliveryDate.format('dddd, MMMM D');
 
-  const priceString = deliveryOption.priceCents === 0 ? 'FREE' : `$${(formatMoney(deliveryOption.priceCents))} -`;
+  const priceString = deliveryOption.priceCents === 0
+   ? 'FREE' :
+    `$${(formatMoney(deliveryOption.
+      priceCents))} -`;
 
   
   const isChecked = deliveryOption.id ===  cartItem.deliveryOptionId;
@@ -166,10 +173,7 @@ document.querySelectorAll(".js-delivery-option")
 .forEach((element) => {
   element.addEventListener('click', ()=>{
     const {productId, deliveryOptionId} = element.dataset;
-    console.log('Before update:', cart);
+    console.log('hooo');
     updateDeliveryOption(productId, deliveryOptionId);
-    console.log('After update:', cart);
-    // Re-render the entire checkout page to update delivery dates
-    location.reload();
   })
 })
