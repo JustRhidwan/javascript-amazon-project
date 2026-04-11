@@ -106,7 +106,7 @@ function renderOrderSummary() {
 
     html += `
       <div class="delivery-option js-delivery-option"
-      data-product-id="${matchingProduct.id}
+      data-product-id="${matchingProduct.id}"
       data-delivery-option-id="${deliveryOption.id}">
         <input type="radio"
         ${isChecked ? 'checked' : ''}
@@ -138,7 +138,7 @@ function renderOrderSummary() {
     });
 
     document.querySelectorAll('.update-link').forEach((link) => {
-      console.log('Attaching update listener to:', link);
+      
       link.addEventListener('click', () => {
         const productId = link.dataset.productId;
         const container = document.querySelector(`.item-container-${productId}`);
