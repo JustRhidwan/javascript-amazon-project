@@ -4,6 +4,7 @@ import { formatMoney } from "../utils/money.js";
 import { hello } from "https://unpkg.com/supersimpledev@1.0.1/hello.esm.js";
 import dayjs from "https://unpkg.com/supersimpledev@8.5.0/dayjs/esm/index.js";
 import { deliveryOptions, getDeliveryOption } from "../../data/deliveryoption.js"; 
+import { renderPaymentSummary } from "./paymentSummary.js";
 
 /*   hello();
       const today = dayjs();
@@ -56,9 +57,9 @@ export function renderOrderSummary() {
                 data-product-id="${matchingProduct.id}">
                     Update
                 </span>
-                <input type=text class="quantity-input"/>
+                <input class="quantity-input js-quantity-input-${matchingProduct.id}">
                 <span class="save-quantity-link link-primary"
-                >Save</span>
+                data-product-id="${matchingProduct.id}">Save</span>
                 <span class="delete-quantity-link link-primary delete-item"
                 data-product-id="${matchingProduct.id}">
                     Delete
@@ -120,13 +121,12 @@ export function renderOrderSummary() {
       dink.addEventListener('click', () => {
         const productId = dink.dataset.productId;
         removeItem(productId);
-        const container = document.querySelector(`.item-container-${productId}`);
-        container.remove();
+        renderOrderSummary();
+        renderPaymentSummary();
       });
     });
 
     document.querySelectorAll('.update-link').forEach((link) => {
-      
       link.addEventListener('click', () => {
         const productId = link.dataset.productId;
         const container = document.querySelector(`.item-container-${productId}`);
@@ -137,32 +137,33 @@ export function renderOrderSummary() {
     document.querySelectorAll('.save-quantity-link').forEach((savelink) => {
       savelink.addEventListener('click', () => {
         const container = savelink.closest('.cart-item-container');
-        const productId= container.querySelector('.delete-item').dataset.productId;
-      
-      const newQuantity = parseInt(container.querySelector('.quantity-input').value);
-      
-      if (newQuantity > 0) {
-          const cartItem = cart.find(item => item.productId === productId);
-          if (cartItem) cartItem.quantity = newQuantity;
-          
-            container.querySelector('.quantity-label').textContent = newQuantity;
-      }
-        container.classList.remove('is-editing-quantity');
-        
-  updateQuantity(productId, newQuantity);
+        const productId = container.querySelector('.delete-item').dataset.productId;
+        const quantityInput = container.querySelector('.quantity-input');
+        const newQuantity = parseInt(quantityInput.value);
+
+        if (newQuantity > 0 && newQuantity < 1000) {
+          updateQuantity(productId, newQuantity);
+          renderOrderSummary();
+          renderPaymentSummary();
+        } else {
+          alert('Quantity must be between 1 and 999');
+          renderOrderSummary();
+        }
       });
     });
+
+    document.querySelectorAll(".js-delivery-option")
+      .forEach((element) => {
+        element.addEventListener('click', () => {
+          const { productId, deliveryOptionId } = element.dataset;
+          updateDeliveryOption(productId, deliveryOptionId);
+          renderOrderSummary();
+          renderPaymentSummary();
+        })
+      });
   }
 
-  calculateCartQuantity();
+  attachEventListeners();
+  
   document.querySelector('.item-quantity').innerHTML = `Checkout(${calculateCartQuantity()})` ;
-
-  document.querySelectorAll(".js-delivery-option")
-  .forEach((element) => {
-    element.addEventListener('click', ()=>{
-      const {productId, deliveryOptionId} = element.dataset;
-      updateDeliveryOption(productId, deliveryOptionId);
-      renderOrderSummary();
-    })
-  })
-}  
+}
